@@ -1,0 +1,47 @@
+# ==================== ESP-IDF Build Output ====================
+build/
+.cache/
+bootloader/
+partition_table/
+
+# ==================== ESP-IDF Config Files ====================
+sdkconfig
+sdkconfig.old
+
+# ==================== ESP-IDF v5+ Managed Components ==========
+managed_components/
+dependencies.lock
+
+# ==================== Python / idf.py =========================
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# ==================== IDE / Editor ============================
+.vscode/
+.idea/
+*.swp
+*~
+*.sublime-*
+
+# ==================== OS Generated Files ======================
+.DS_Store
+Thumbs.db
+ehthumbs.db
+
+# ==================== Logs & Temporary Files ==================
+*.log
+*.tmp
+*.bak
+
+# ==================== CMake Artifacts (if they leak) ==========
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+install_manifest.txt
