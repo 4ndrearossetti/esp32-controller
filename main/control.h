@@ -24,10 +24,10 @@ typedef struct {
   Roll and pitch are angles in radians. Yaw is a rate in rad/s
  */
 typedef struct {
-    float altitude;
-    float roll;
-    float pitch;
-    float yaw_rate;
+        float altitude;
+        float roll;
+        float pitch;
+        float yaw_rate;
 } Setpoints;
 
 /*
@@ -39,10 +39,10 @@ typedef struct {
   per-motor offsets.
  */
 typedef struct {
-    float thrust_cmd;
-    float roll_cmd;
-    float pitch_cmd;
-    float yaw_cmd;
+        float thrust_cmd;
+        float roll_cmd;
+        float pitch_cmd;
+        float yaw_cmd;
 } ControlOutput;
 
 /*
@@ -59,12 +59,12 @@ typedef struct {
   how to wire the cascade, not what numbers to wire it with.
 */
 typedef struct {
-    PID_Controller altitude;
-    PID_Controller roll_angle;
-    PID_Controller roll_rate;
-    PID_Controller pitch_angle;
-    PID_Controller pitch_rate;
-    PID_Controller yaw_rate;
+        PID_Controller altitude;
+        PID_Controller roll_angle;
+        PID_Controller roll_rate;
+        PID_Controller pitch_angle;
+        PID_Controller pitch_rate;
+        PID_Controller yaw_rate;
 } Controllers;
 
 /*

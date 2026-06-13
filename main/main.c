@@ -2,65 +2,64 @@
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "driver/i2c.h"
+#include "mpu6050.h"
 
-#define I2C_PORT        I2C_NUM_0
-#define PIN_SDA         21
-#define PIN_SCL         22
-#define I2C_FREQ_HZ     400000
-#define MPU6050_ADDR    0x68
-#define REG_WHO_AM_I    0x75
+#define PIN_SDA      21
+#define PIN_SCL      22
+#define I2C_FREQ_HZ  400000
 
-static void i2c_init(void)
-{
-    i2c_config_t conf = {
-        .mode             = I2C_MODE_MASTER,
-        .sda_io_num       = PIN_SDA,
-        .scl_io_num       = PIN_SCL,
-        .sda_pullup_en    = GPIO_PULLUP_DISABLE,
-        .scl_pullup_en    = GPIO_PULLUP_DISABLE,
-        .master.clk_speed = I2C_FREQ_HZ,
-    };
-    ESP_ERROR_CHECK(i2c_param_config(I2C_PORT, &conf));
-    ESP_ERROR_CHECK(i2c_driver_install(I2C_PORT, I2C_MODE_MASTER, 0, 0, 0));
+static void i2c_init(void) {
+        i2c_config_t conf = {
+                .mode             = I2C_MODE_MASTER,
+                .sda_io_num       = PIN_SDA,
+                .scl_io_num       = PIN_SCL,
+                .sda_pullup_en    = GPIO_PULLUP_DISABLE,
+                .scl_pullup_en    = GPIO_PULLUP_DISABLE,
+                .master.clk_speed = I2C_FREQ_HZ,
+        };
+        ESP_ERROR_CHECK(i2c_param_config(I2C_NUM_0, &conf));
+        ESP_ERROR_CHECK(i2c_driver_install(I2C_NUM_0, I2C_MODE_MASTER, 0, 0, 0));
 }
 
-static esp_err_t mpu6050_read_register(uint8_t reg, uint8_t *out)
-{
-    i2c_cmd_handle_t cmd = i2c_cmd_link_create();
+void app_main(void) {
+        i2c_init();
 
-    i2c_master_start(cmd);
-    i2c_master_write_byte(cmd, (MPU6050_ADDR << 1) | I2C_MASTER_WRITE, true);
-    i2c_master_write_byte(cmd, reg, true);
+        mpu6050_t imu;
+        mpu6050_sample_t imu_sample;
+        mpu6050_init(&imu, I2C_NUM_0, 0x68);
 
-    i2c_master_start(cmd);   // repeated START
-    i2c_master_write_byte(cmd, (MPU6050_ADDR << 1) | I2C_MASTER_READ, true);
-    i2c_master_read_byte(cmd, out, I2C_MASTER_NACK);
+        if (mpu6050_probe(&imu) != ESP_OK) {
+                printf("probe failed\n");
+                return;
+        }
+        printf("probe OK\n");
 
-    i2c_master_stop(cmd);
-    esp_err_t ret = i2c_master_cmd_begin(I2C_PORT, cmd, pdMS_TO_TICKS(100));
-    i2c_cmd_link_delete(cmd);
-    return ret;
-}
+        if (mpu6050_wake(&imu) != ESP_OK) {
+                printf("wake failed\n");
+                return;
+        }
+        printf("wake OK\n");
 
-void app_main(void)
-{
-    i2c_init();
+        if (mpu6050_calibrate(&imu, 200) != ESP_OK) {
+                printf("calibrate failed\n");
+                return;
+        }
+        printf("calibrate OK\n");
 
-    uint8_t who_am_i = 0;
-    esp_err_t ret = mpu6050_read_register(REG_WHO_AM_I, &who_am_i);
+        if (mpu6050_read(&imu, &imu_sample) != ESP_OK) {
+            printf("read failed\n");
+            return;
+        }
+        printf("read OK\n");
 
-    if (ret != ESP_OK) {
-        printf("I2C transaction failed: %s\n", esp_err_to_name(ret));
-        printf("Check wiring: SDA->GPIO%d, SCL->GPIO%d, VCC->3V3\n",
-               PIN_SDA, PIN_SCL);
-        return;
-    }
+        printf("\n=== SENSOR DATA ===\n");
+        printf("ax≈ %f\t ay≈ %f\t az≈ %f\n gx≈ %f\t gy≈ %f\t gz≈ %f\n", 
+                imu_sample.ax, imu_sample.ay, imu_sample.az,
+                imu_sample.gx, imu_sample.gy, imu_sample.gz);
 
-    if (who_am_i == MPU6050_ADDR) {
-        printf("WHO_AM_I: 0x%02X -- OK\n", who_am_i);
-    } else {
-        printf("WHO_AM_I: 0x%02X -- unexpected (wiring issue or wrong device)\n",
-               who_am_i);
-    }
+        printf("\n=== SENSOR BIASES ===\n");
+        printf("bias accel: %f\t %f\t %f\nbias gyro: %f\t %f\t %f\n", 
+                imu.bias_ax, imu.bias_ay, imu.bias_az,
+                imu.bias_gx, imu.bias_gy, imu.bias_gz);
 }
 
