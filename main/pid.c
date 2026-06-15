@@ -36,10 +36,8 @@ float pid_update(PID_Controller* pid, float feedback, float dt) {
 
         float error = pid->setpoint - feedback;
 
-        // Tentative integral update
         float integral_new = pid->integral + error * dt;
 
-        // Derivative on measurement
         float derivative = (feedback - pid->prev_feedback) / dt;
 
         float output = pid->kp * error
