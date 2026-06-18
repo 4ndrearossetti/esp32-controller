@@ -1,5 +1,11 @@
 # esp32-controller
 
+200Hz cascaded PID flight controller on ESP32, FreeRTOS, MPU-6050 + complementary filter — real-hardware port of my PID-controller simulation.
+
+More on my website: [andrearossetti.me](https://andrearossetti.me/projects/esp32-controller)
+
+## About the Project
+
 A quadcopter flight controller written from scratch for the ESP32, built incrementally on real hardware. No flight-controller framework, no sensor libraries — every layer (I2C chip driver, sensor fusion, control stack, real-time scheduling) is implemented directly to understand how a flight controller actually works from first principles.
 
 The end goal is a drone that estimates its own attitude and holds stable control on real hardware, as the foundation for later autonomous, GPS-denied navigation.
