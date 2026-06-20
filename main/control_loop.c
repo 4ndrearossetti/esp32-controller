@@ -18,7 +18,10 @@ static void control_task(void *arg) {
 
         imu_init(&attitude, 0.98f);
 
-        mpu6050_init(&imu, I2C_NUM_0, 0x68);
+        if (mpu6050_init(&imu, I2C_NUM_0, 0x68) != ESP_OK) {
+                printf("init failed\n");
+                vTaskDelete(NULL);
+        }
 
         if (mpu6050_probe(&imu) != ESP_OK) {
                 printf("probe failed\n");
@@ -30,12 +33,15 @@ static void control_task(void *arg) {
                 vTaskDelete(NULL);
         }
 
+        if (mpu6050_set_gyro_range(&imu) != ESP_OK) {
+                printf("set gyro range failed\n");
+                vTaskDelete(NULL);
+        }
+
         if (mpu6050_calibrate(&imu, 200) != ESP_OK) {
                 printf("calibrate failed\n");
                 vTaskDelete(NULL);
         }
-
-        printf("bias gyro: %f %f %f\n", imu.bias_gx, imu.bias_gy, imu.bias_gz);
 
         const float DT = 0.005f;
         int log_counter = 0;

@@ -7,9 +7,10 @@
 #define WHO_AM_I_VALUE   0x68
 #define REG_PWR_MGMT_1   0x6B
 #define REG_ACCEL_XOUT_H 0x3B
+#define REG_GYRO_CONFIG  0x1B
 
 static const float ACCEL_SCALE = 9.81f / 16384.0f;
-static const float GYRO_SCALE = (float)(M_PI / 180.0) / 131.0f;
+static const float GYRO_SCALE = (float)(M_PI / 180.0) / 32.8f;  // +-1000dps
 
 static esp_err_t mpu6050_read_register(const mpu6050_t* m, uint8_t reg, uint8_t* out) {
         i2c_cmd_handle_t cmd = i2c_cmd_link_create();
@@ -94,6 +95,10 @@ esp_err_t mpu6050_read(const mpu6050_t* m, mpu6050_sample_t* out) {
         out->gz = gz_raw * GYRO_SCALE  - m->bias_gz;
 
         return ESP_OK;
+}
+
+esp_err_t mpu6050_set_gyro_range(const mpu6050_t* m) {
+        return mpu6050_write_register(m, REG_GYRO_CONFIG, 0x10);  // +-1000dps
 }
 
 esp_err_t mpu6050_calibrate(mpu6050_t* m, int n_samples) {

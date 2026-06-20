@@ -19,6 +19,7 @@ esp_err_t mpu6050_init(mpu6050_t *m, i2c_port_t port, uint8_t addr);
 esp_err_t mpu6050_probe(const mpu6050_t *m);
 esp_err_t mpu6050_wake(const mpu6050_t *m);
 esp_err_t mpu6050_read(const mpu6050_t *m, mpu6050_sample_t *out);
+esp_err_t mpu6050_set_gyro_range(const mpu6050_t *m);
 esp_err_t mpu6050_calibrate(mpu6050_t *m, int n_samples);
 
 #endif
