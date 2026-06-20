@@ -13,15 +13,15 @@ typedef struct {
         float integral;          // accumulated error · dt
         int   has_prev;          // false until the first call completes
         int   integral_clamped;  // diagnostic: was integral frozen?
-} PID_Controller;
+} pid_controller_t;
 
-void pid_init(PID_Controller* pid,
+void pid_init(pid_controller_t* pid,
               float kp, float ki, float kd,
               float out_min, float out_max);
 
-float pid_update(PID_Controller* pid, float feedback, float dt);
+float pid_update(pid_controller_t* pid, float feedback, float dt);
 
-void pid_reset(PID_Controller* pid);
+void pid_reset(pid_controller_t* pid);
 
 #endif
 

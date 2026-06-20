@@ -1,8 +1,8 @@
 #include "control.h"
 
-ControlOutput control_update(Controllers* c, const VehicleState* s,
-                             const Setpoints* sp, float dt) {
-        ControlOutput out;
+control_output_t control_update(controllers_t* c, const vehicle_state_t* s,
+                             const setpoints_t* sp, float dt) {
+        control_output_t out;
 
         /* Altitude — single loop.
          The PID works in altitude space (positive up); the drone state is
@@ -34,7 +34,7 @@ ControlOutput control_update(Controllers* c, const VehicleState* s,
         return out;
 }
 
-void control_reset(Controllers* c) {
+void control_reset(controllers_t* c) {
         pid_reset(&c->altitude);
         pid_reset(&c->roll_angle);
         pid_reset(&c->roll_rate);

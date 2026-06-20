@@ -8,35 +8,35 @@ typedef struct {
         float vx, vy, vz;
         float roll, pitch, yaw;
         float p, q, r;
-} VehicleState;
+} vehicle_state_t;
 
 typedef struct {
         float altitude;
         float roll;
         float pitch;
         float yaw_rate;
-} Setpoints;
+} setpoints_t;
 
 typedef struct {
         float thrust_cmd;
         float roll_cmd;
         float pitch_cmd;
         float yaw_cmd;
-} ControlOutput;
+} control_output_t;
 
 typedef struct {
-        PID_Controller altitude;
-        PID_Controller roll_angle;
-        PID_Controller roll_rate;
-        PID_Controller pitch_angle;
-        PID_Controller pitch_rate;
-        PID_Controller yaw_rate;
-} Controllers;
+        pid_controller_t altitude;
+        pid_controller_t roll_angle;
+        pid_controller_t roll_rate;
+        pid_controller_t pitch_angle;
+        pid_controller_t pitch_rate;
+        pid_controller_t yaw_rate;
+} controllers_t;
 
-ControlOutput control_update(Controllers* c, const VehicleState* s,
-                             const Setpoints* sp, float dt);
+control_output_t control_update(controllers_t* c, const vehicle_state_t* s,
+                             const setpoints_t* sp, float dt);
 
-void control_reset(Controllers* c);
+void control_reset(controllers_t* c);
 
 #endif
 

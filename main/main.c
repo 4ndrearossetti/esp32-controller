@@ -51,6 +51,8 @@ static void control_task(void *arg) {
                 vTaskDelete(NULL);
         }
 
+        printf("bias gyro: %f %f %f\n", imu.bias_gx, imu.bias_gy, imu.bias_gz);
+
         const float DT = 0.005f;
         int log_counter = 0;
 

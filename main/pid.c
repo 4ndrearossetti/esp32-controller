@@ -1,6 +1,6 @@
 #include "pid.h"
 
-void pid_init(PID_Controller* pid,
+void pid_init(pid_controller_t* pid,
               float kp, float ki, float kd,
               float out_min, float out_max) {
         pid->setpoint   = 0.0f;
@@ -12,14 +12,14 @@ void pid_init(PID_Controller* pid,
         pid_reset(pid);
 }
 
-void pid_reset(PID_Controller* pid) {
+void pid_reset(pid_controller_t* pid) {
         pid->prev_feedback    = 0.0f;
         pid->integral         = 0.0f;
         pid->has_prev         = 0;
         pid->integral_clamped = 0;
 }
 
-float pid_update(PID_Controller* pid, float feedback, float dt) {
+float pid_update(pid_controller_t* pid, float feedback, float dt) {
     /* First call: no history, so no meaningful derivative or integration.
       Seed prev_feedback so the next call sees a real derivative.
       Return a clamped P-only output rather than zero, otherwise the
